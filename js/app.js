@@ -101,7 +101,7 @@ function date_format() {
                     return d[4].split(':')[0] + 'h ' + d[1] + ' ' + d[2];
                 } else {
                     var date = new Date(d);
-                    return d3.time.format('%H %b %d')(date);
+                    return d3.time.format('%H %p')(date);
                 }
             }
             break;
