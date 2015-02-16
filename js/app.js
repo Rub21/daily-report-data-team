@@ -314,7 +314,7 @@ function draw() {
     $('#chart_bar').html('<svg></svg>');
     $('#chart_line').empty();
     $('#chart_line').html('<svg></svg>');
-
+    console.log(host + type + '&' + start_times + '&' + end_times);
     $.ajax({
         dataType: "json",
         url: host + type + '&' + start_times + '&' + end_times,
