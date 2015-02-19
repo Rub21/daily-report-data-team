@@ -97,11 +97,11 @@ function date_format() {
             //per hour
             formatter = function(d, i) {
                 if (typeof d === 'object') {
-                    d = (d + "").split(' ');
-                    return d[4].split(':')[0] + 'h ' + d[1] + ' ' + d[2];
+                    var date = new Date(d);
+                    return d3.time.format.utc('%a %d %H%p')(date);
                 } else {
                     var date = new Date(d);
-                    return d3.time.format('%H %p')(date);
+                    return d3.time.format.utc('%a-%d %H%p')(date);
                 }
             }
             break;
@@ -109,13 +109,11 @@ function date_format() {
             //per day
             formatter = function(d, i) {
                 if (typeof d === 'object') {
-                    d = d + "";
-                    return d.substr(4, 11);
-
-
+                    var date = new Date(d);
+                    return d3.time.format.utc('%a:%d %b')(date);
                 } else {
                     var date = new Date(d);
-                    return d3.time.format('%d %b %Y')(date);
+                    return d3.time.format.utc('%a:%d-%b')(date);
                 }
             }
             break;
@@ -123,11 +121,11 @@ function date_format() {
             // per month
             formatter = function(d, i) {
                 if (typeof d === 'object') {
-                    d = (d + "").split(' ');
-                    return d[1] + ' ' + d[3];
+                    var date = new Date(d);
+                    return d3.time.format.utc('%b %Y')(date);
                 } else {
                     var date = new Date(d);
-                    return d3.time.format('%b %Y')(date);
+                    return d3.time.format.utc('%b %Y')(date);
                 }
             }
             break;
@@ -135,17 +133,18 @@ function date_format() {
             // per year
             formatter = function(d, i) {
                 if (typeof d === 'object') {
-                    d = (d + "").split(' ');
-                    return d[3];
+                    var date = new Date(d);
+                    return d3.time.format.utc('%Y')(date);
                 } else {
                     var date = new Date(d);
-                    return d3.time.format('%Y')(date);
+                    return d3.time.format.utc('%Y')(date);
                 }
             }
             break;
     }
     return formatter;
 }
+
 
 $(document).ready(function() {
     $('.from').val(dates[1]);
@@ -328,7 +327,6 @@ function draw() {
                         //per hour
                         _.each(val.values, function(v, k) {
                             var d = val.values[k].x.split('-');
-
                             var date_timestamp = Date.UTC(d[0],
                                 parseInt(d[1]) - 1,
                                 parseInt(d[2]), parseInt(d[3]), 300);
@@ -342,13 +340,12 @@ function draw() {
                         //per day
                         _.each(val.values, function(v, k) {
                             var d = val.values[k].x.split('-');
-                            var date_timestamp = Date.UTC(d[0],
+                            var date_timestamp = Date.UTC(parseInt(d[0]),
                                 parseInt(d[1]) - 1,
-                                parseInt(d[2]) + 1, 0, 0)
+                                parseInt(d[2]));
                             var utc = new Date(date_timestamp);
                             val.values[k].x = utc;
                             date_xaxis.push(date_timestamp);
-
                         });
                         break;
                     case 'm':
@@ -359,7 +356,6 @@ function draw() {
                             var utc = new Date(date_timestamp);
                             val.values[k].x = utc;
                             date_xaxis.push(date_timestamp);
-
                         });
                         break;
                     case 'y':
