@@ -20,7 +20,7 @@ function draw_bar(data) {
                 top: 50,
                 right: 20,
                 bottom: 50,
-                left: 50
+                left: 100
             })
             .transitionDuration(300)
             .delay(0)
