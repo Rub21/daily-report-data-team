@@ -1,0 +1,42 @@
+{
+  "name": "osm-edit-report",
+  "version": "0.0.10",
+  "description": "Reports editing activity for a number of users on OpenStreetMap.",
+  "author": "Mapbox",
+  "license": "ISC",
+  "engines": {
+    "node": "0.10.26"
+  },
+  "dependencies": {
+    "async": "^1.2.1",
+    "cors": "^2.4.1",
+    "express": "^4.0.0",
+    "forever": "^0.15.1",
+    "node-crontab": "0.0.8",
+    "optimist": "^0.6.1",
+    "osmium": "*",
+    "path": "^0.11.14",
+    "pg": "^4.0.0",
+    "request": "^2.47.0",
+    "underscore": "^1.7.0"
+  },
+  "scripts": {
+    "start": "npm run server && npm run load",
+    "server": "./node_modules/.bin/forever start server/server.js && ./node_modules/.bin/forever list",
+    "load": "./node_modules/.bin/forever start load/load.js --num_file=937 --num_directory=28 --pguser=$ReportDTDatabaseUsername --pgpassword=$ReportDTDatabasePassword --pgdatabase=$ReportDTDatabaseDatabaseName && ./node_modules/.bin/forever list",
+    "stop": "./node_modules/.bin/forever stop server/server.js && ./node_modules/.bin/forever stop load/load.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mapbox/osm-edit-report.git"
+  },
+  "keywords": [
+    "openstreetmap",
+    "report",
+    "edit"
+  ],
+  "bugs": {
+    "url": "https://github.com/mapbox/osm-edit-report/issues"
+  },
+  "homepage": "https://github.com/mapbox/osm-edit-report"
+}
