@@ -1,3 +1,3 @@
 var settings = {
-  host: 'http://52.91.50.225:3021/'
+  host: 'https://osm-edit-report-service.mapbox.com/'
 };
