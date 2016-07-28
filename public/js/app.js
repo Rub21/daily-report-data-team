@@ -240,7 +240,7 @@
                 }
                 $(".from").datepicker("option", "maxDate", end_str);
             },
-            yearRange: '2015:' + today.getFullYear()
+            yearRange: '2012:' + today.getFullYear()
         });
 
         $(".from").datepicker("option", "maxDate", end_str);
