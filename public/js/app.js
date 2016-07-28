@@ -202,7 +202,7 @@
                 }
                 $(".to").datepicker("option", "minDate", start_str);
             },
-            yearRange: '2015:' + today.getFullYear()
+            yearRange: '2012:' + today.getFullYear()
         });
         $(".to").datepicker({
             weekStart: 1,
