@@ -27,8 +27,10 @@
     start_times = (new Date(start_str + " 00:00:00").getTime() / 1000);
     end_times = new Date(end_str + " 00:00:00").getTime() / 1000 + 24 * 60 * 60 - 1;
 
+    console.log(start_times);
+    console.log(end_times);
+
     function draw_line(data) {
-        console.log(data);
         var chart;
         var nv_line = nv;
         nv_line.addGraph(function() {
@@ -53,6 +55,7 @@
                     return k % 2 == 0;
                 });
             }
+            console.log(date_xaxis)
             chart.xAxis.tickValues(date_xaxis);
             chart.yAxis.tickFormat(d3.format(',.H'));
             d3.select('#chart_line svg')
@@ -66,7 +69,6 @@
     }
 
     function draw_line_changeset(data) {
-        console.log(data);
         _.each(data, function(val, key) {
             _.each(val.values, function(v) {
                 v.y = v.change;
@@ -331,64 +333,72 @@
         $('#chart_line_changeset').empty();
         $('#chart_line_changeset').html('<svg></svg>');
 
+        // console.log(start_str);
+        // console.log(end_str)
         $.ajax({
             dataType: "json",
-            url: settings.host + type + '&' + start_times + '&' + end_times,
+            url: 'https://osm-comments-api.mapbox.com/api/v1/stats?from= ' + start_str + 'T00:00:00.000Z&to=' + end_str + 'T21:29:59.000Z&bbox=-129.85045781250074,32.37727479007697,-114.99694218750125,42.793066239890265',
             success: function(json) {
                 date_xaxis = [];
                 json_obj = [];
-                _.each(json, function(val, key) {
-                    val.values_obj = null;
-                    switch (type) {
-                        case 'h':
-                            //per hour
-                            _.each(val.values, function(v, k) {
-                                var d = val.values[k].x.split('-');
-                                var date_timestamp = Date.UTC(d[0],
-                                    parseInt(d[1]) - 1,
-                                    parseInt(d[2]), parseInt(d[3]), 0);
-                                var utc = new Date(date_timestamp);
-                                val.values[k].x = utc;
-                                date_xaxis.push(date_timestamp);
+                // _.each(json, function(val, key) {
+                //     val.values_obj = null;
+                //     switch (type) {
+                //         case 'h':
+                //             //per hour
+                //             _.each(val.values, function(v, k) {
+                //                 var d = val.values[k].x.split('-');
+                //                 var date_timestamp = Date.UTC(d[0],
+                //                     parseInt(d[1]) - 1,
+                //                     parseInt(d[2]), parseInt(d[3]), 0);
+                //                 var utc = new Date(date_timestamp);
+                //                 val.values[k].x = utc;
+                //                 date_xaxis.push(date_timestamp);
 
-                            });
-                            break;
-                        case 'd':
-                            //per day
-                            _.each(val.values, function(v, k) {
-                                var d = val.values[k].x.split('-');
-                                var date_timestamp = Date.UTC(parseInt(d[0]),
-                                    parseInt(d[1]) - 1,
-                                    parseInt(d[2]));
-                                var utc = new Date(date_timestamp);
-                                val.values[k].x = utc;
-                                date_xaxis.push(date_timestamp);
-                            });
-                            break;
-                        case 'm':
-                            _.each(val.values, function(v, k) {
-                                var d = val.values[k].x.split('-');
-                                var date_timestamp = Date.UTC(d[0],
-                                    parseInt(d[1]) - 1, 12, 0, 0);
-                                var utc = new Date(date_timestamp);
-                                val.values[k].x = utc;
-                                date_xaxis.push(date_timestamp);
-                            });
-                            break;
-                        case 'y':
-                            _.each(val.values, function(v, k) {
-                                var d = val.values[k].x.split('-');
-                                var date_timestamp = Date.UTC(d[0], 0, 2, 0, 0);
-                                var utc = new Date(date_timestamp);
-                                val.values[k].x = utc;
-                                date_xaxis.push(date_timestamp);
-                            });
-                            break;
-                    }
-                    json_obj.push(val);
-                });
-                draw_line(json_obj);
-                draw_line_changeset(JSON.parse(JSON.stringify(json_obj)));
+                //             });
+                //             break;
+                //         case 'd':
+                //             //per day
+                //             _.each(val.values, function(v, k) {
+                //                 var d = val.values[k].x.split('-');
+                //                 var date_timestamp = Date.UTC(parseInt(d[0]),
+                //                     parseInt(d[1]) - 1,
+                //                     parseInt(d[2]));
+                //                 var utc = new Date(date_timestamp);
+                //                 val.values[k].x = utc;
+                //                 date_xaxis.push(date_timestamp);
+                //             });
+                //             break;
+                //         case 'm':
+                //             _.each(val.values, function(v, k) {
+                //                 var d = val.values[k].x.split('-');
+                //                 var date_timestamp = Date.UTC(d[0],
+                //                     parseInt(d[1]) - 1, 12, 0, 0);
+                //                 var utc = new Date(date_timestamp);
+                //                 val.values[k].x = utc;
+                //                 date_xaxis.push(date_timestamp);
+                //             });
+                //             break;
+                //         case 'y':
+                //             _.each(val.values, function(v, k) {
+                //                 var d = val.values[k].x.split('-');
+                //                 var date_timestamp = Date.UTC(d[0], 0, 2, 0, 0);
+                //                 var utc = new Date(date_timestamp);
+                //                 val.values[k].x = utc;
+                //                 date_xaxis.push(date_timestamp);
+                //             });
+                //             break;
+                //     }
+                //     json_obj.push(val);
+                //     // json_obj.push();
+                // });
+                // formatforGraph(json)
+                var dt = formatforGraph(json, date_xaxis);
+                draw_line(dt);
+                // formatforGraph(json_obj)
+                //draw_line(cre());
+
+                draw_line_changeset(JSON.parse(JSON.stringify(dt)));
             }
         });
         $('#chart_line').addClass("loading");
@@ -396,3 +406,144 @@
         location.href = document.URL.split('#')[0] + '#' + type + '&' + start_str + '&' + end_str;
     }
 })(settings);
+
+
+function formatforGraph(data, date_xaxis) {
+
+    var users = [
+        'saikabhi',
+        'andygol',
+        'PlaneMad',
+        'BharataHS',
+        'bkowshik',
+        'calfarome',
+        'Chetan_Gowda',
+        'dannykath',
+        'samely',
+        'yurasi',
+        'Fa7C0N',
+        'jinalfoflia',
+        'Jothirnadh',
+        'karitotp',
+        'Luis36995',
+        'manings',
+        'manoharuss',
+        'nammala',
+        'nikhilprabhakar',
+        'oini',
+        'ridixcr',
+        'piligab',
+        'poornibadrinath',
+        'ramyaragupathy',
+        'RichRico',
+        'Rub21',
+        'srividya_c',
+        'upendrakarukonda',
+        'Bhojaraj',
+        'ashleyannmathew',
+        'muziriana',
+        'bhavana naga',
+        'marthaleena',
+        'oormilavinod',
+        'Minh Nguyen'
+    ]
+    var objs = {};
+    for (var i = 0; i < users.length; i++) {
+        objs[users[i]] = {
+            key: users[i],
+            color: '#' + (Math.random() * 0xFFFFFF << 0).toString(16),
+            values: []
+        };
+        var x = 0;
+        for (var keyPerHour in data) {
+            x++;
+            date_xaxis.push(keyPerHour);
+            var objPerhour = data[keyPerHour];
+
+            objs[users[i]].values.push({
+                x: x,
+                y: counter(objPerhour[users[i]]),
+                change: counterChangeset(objPerhour[users[i]])
+            });
+        }
+
+
+
+    }
+
+    var result = [];
+    for (var i in objs) {
+        result.push(objs[i])
+    }
+    return result;
+}
+
+function counterChangeset(objPerUser) {
+    if (!objPerUser) {
+        return 0;
+    } else {
+        return objPerUser.changesets.length;
+    }
+}
+
+function counter(objPerUser) {
+    var numobjs = 0;
+    if (!objPerUser) {
+        return numobjs;
+    } else {
+        console.log(objPerUser)
+        var nodes = objPerUser.nodes;
+        var relations = objPerUser.relations;
+        var ways = objPerUser.ways;
+
+        if (nodes) {
+            var numobjs = numobjs + nodes.c + nodes.m;
+        }
+        if (ways) {
+            var numobjs = numobjs + ways.c + ways.m;
+        }
+        if (relations) {
+            var numobjs = numobjs + relations.c + relations.m;
+        }
+        return numobjs;
+    }
+
+}
+
+function sinAndCos() {
+    var sin = [],
+        sin2 = [],
+        cos = [];
+
+    //Data is represented as an array of {x,y} pairs.
+    for (var i = 0; i < 100; i++) {
+        sin.push({
+            x: i,
+            y: Math.sin(i / 10)
+        });
+        sin2.push({
+            x: i,
+            y: Math.sin(i / 10) * 0.25 + 0.5
+        });
+        cos.push({
+            x: i,
+            y: .5 * Math.cos(i / 10)
+        });
+    }
+
+    //Line chart data should be sent as an array of series objects.
+    return [{
+        values: sin, //values - represents the array of {x,y} data points
+        key: 'Sine Wave', //key  - the name of the series.
+        color: '#ff7f0e' //color - optional: choose your own line color.
+    }, {
+        values: cos,
+        key: 'Cosine Wave',
+        color: '#2ca02c'
+    }, {
+        values: sin2,
+        key: 'Another sine wave',
+        color: '#7777ff',
+        area: true //area - set to true if you want this line to turn into a filled area chart.
+    }];
+}
